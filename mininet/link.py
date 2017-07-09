@@ -25,7 +25,7 @@ Link: basic link class for creating veth pairs
 """
 
 from mininet.log import info, error, debug
-from mininet.util import makeIntfPair
+from mininet.util import makeIntfPair, quietRun
 import mininet.node
 import re
 
@@ -199,9 +199,9 @@ class Intf( object ):
         "Delete interface"
         self.cmd( 'ip link del ' + self.name )
         # We used to do this, but it slows us down:
-        # if self.node.inNamespace:
-        # Link may have been dumped into root NS
-        # quietRun( 'ip link del ' + self.name )
+        #~ if self.node.inNamespace:
+			#~ # Link may have been dumped into root NS
+			#~ quietRun( 'ip link del ' + self.name )
         self.node.delIntf( self )
         self.link = None
 
@@ -574,3 +574,4 @@ class TCULink( TCLink ):
     def __init__( self, *args, **kwargs ):
         kwargs.update( txo=False, rxo=False )
         TCLink.__init__( self, *args, **kwargs )
+

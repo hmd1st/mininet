@@ -414,6 +414,23 @@ class Node( object ):
             return max( self.ports.values() ) + 1
         return self.portBase
 
+    def moveIntf2Rootns( self, intf, port=None):
+        """Add an interface.
+           intf: interface
+           port: port number (optional, typically OpenFlow port number)
+           moveIntfFn: function to move interface (optional)"""
+        if port is None:
+            port = self.newPort()
+        self.intfs[ port ] = intf
+        self.ports[ intf ] = port
+        self.nameToIntf[ intf.name ] = intf
+        debug( '\n' )
+        debug( 'added intf %s (%d) to Root Network Namespace\n' % (
+                intf, port) )
+        if self.inNamespace:
+            debug( 'moving', intf, 'into namespace for', self.name, '\n' )
+            self.cmd('ip link set %s netns 1' %intf.name)
+    
     def addIntf( self, intf, port=None, moveIntfFn=moveIntf ):
         """Add an interface.
            intf: interface
@@ -1556,3 +1573,5 @@ def DefaultController( name, controllers=DefaultControllers, **kwargs ):
 def NullController( *_args, **_kwargs ):
     "Nonexistent controller - simply returns None"
     return None
+
+
